@@ -36,6 +36,7 @@ class StripeController extends Controller
 
     public function checkout(Request $request)
     {
+        //create stipe payment intent
         $intent = \Stripe\PaymentIntent::create([
             'amount' => ($request->amount) * 100,
             'currency' => 'INR',

@@ -38,7 +38,6 @@
 @push('extra-javascript')
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-
 //Stripe payment method.
 const stripe = Stripe("{{ env('STRIPE_KEY') }}");
  const elements = stripe.elements();
@@ -137,7 +136,6 @@ const stripe = Stripe("{{ env('STRIPE_KEY') }}");
                      if (result.paymentIntent.status === 'succeeded') {
                          $(".loader").hide();
                          localStorage.setItem("paymentSucessMessage", "Your payment intent has been successfully created.");
-                        //  $('.alert-checkout').find('.alert-checkout-sucess').show();
                          var route = "{{ route('checkout-view') }}";
                          window.location.replace(route);
                      }

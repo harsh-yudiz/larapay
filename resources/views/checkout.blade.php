@@ -36,8 +36,8 @@
             },
             messages: {
                 amount: {
-                    required: "Your amount is required.",
-                    not_empty: "Your amount is not empty.",
+                    required: "Your amount field is required.",
+                    not_empty: "Your amount field is not empty.",
                     digits: "Your amount field is contain only digit."
                 },
             },
@@ -60,8 +60,6 @@
         var message = localStorage.getItem("paymentSucessMessage");
         $('#alert-checkout-sucess').text(message).show();
         localStorage.clear();
-
-
     });
 </script>
 @endpush

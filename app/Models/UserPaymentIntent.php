@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserPaymentIntent extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'user_id',
         'payment_intent_id',
