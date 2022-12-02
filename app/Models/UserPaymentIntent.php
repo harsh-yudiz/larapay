@@ -13,6 +13,7 @@ class UserPaymentIntent extends Model
         'user_id',
         'payment_intent_id',
         'payment_intent_secret',
+        'payment_capture_id',
         'amount'
     ];
 

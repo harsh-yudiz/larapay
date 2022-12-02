@@ -46,4 +46,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserPaymentIntent::class);
     }
+
+    public function subscription()
+    {
+        return $this->hasOne(Subscription::class);
+    }
 }

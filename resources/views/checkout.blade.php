@@ -9,15 +9,16 @@
                     <div class="alert alert-success alert-checkout" id="alert-div">
                         <span id="alert-checkout-sucess"></span>
                     </div>
-                    <form method="post" id="checkout-form" action="{{ route('checkout') }}">
+                    <form method="post" id="checkout-form" action="{{ route('create-payment-intent') }}">
                         @csrf
                         <div class="form-group ">
                             <input type="number" class="form-control" id="amount" name="amount" min="1" max="99999">
                         </div>
-                        <button type="submit" class="btn btn-primary mt-2">Checkout</button>
+                        <button type="submit" class="btn btn-primary mt-2"> Stripe Checkout</button>
                     </form>
                 </div>
                 <div class="col-md-3"></div>
+                <a href="{{ route('stripe-product-list') }}">Stripe Subscription product</a>
             </div>
         </div>
     </div>

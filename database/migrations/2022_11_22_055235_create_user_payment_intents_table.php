@@ -17,8 +17,9 @@ class CreateUserPaymentIntentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->float('amount');
-            $table->string('payment_intent_secret', 500);
-            $table->string('payment_intent_id', 500);
+            $table->string('payment_intent_secret', 500)->nullable();
+            $table->string('payment_intent_id', 500)->nullable();
+            $table->string('payment_capture_id', 500)->nullable();
             $table->timestamps();
         });
     }

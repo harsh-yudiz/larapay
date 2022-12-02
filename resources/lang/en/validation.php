@@ -129,6 +129,8 @@ return [
     'uploaded' => 'The :attribute failed to upload.',
     'url' => 'The :attribute must be a valid URL.',
     'uuid' => 'The :attribute must be a valid UUID.',
+    'not_empty' => 'The :attribute is not empty.',
+    'extension' => 'Please enter only jpg, jpeg, png image extension.',
 
     /*
     |--------------------------------------------------------------------------

@@ -139,7 +139,6 @@ const stripe = Stripe("{{ env('STRIPE_KEY') }}");
                          var route = "{{ route('checkout-view') }}";
                          window.location.replace(route);
                      }
-                     return false;
                  }
              });
          }
