@@ -26,6 +26,16 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="cars"><b>Product Type:</b></label>
+                    <select name="producttype" class="form-control" id="producttype">
+                        <option value="">Select</option>
+                        <option value="PHYSICAL">PHYSICAL</option>
+                        <option value="DIGITAL">DIGITAL</option>
+                        <option value="SERVICE">SERVICE</option>
+                    </select></br>
+                </div>
+
+                <div class="form-group">
                     <button type="submit">Create Product</button>
                 </div>
             </div>

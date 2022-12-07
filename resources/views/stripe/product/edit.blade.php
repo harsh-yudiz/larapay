@@ -12,7 +12,7 @@
             <div class="container">
                 <div class="form-group">
                     <label for="uname"><b>Product Name</b></label>
-                    <input type="text" class="form-control" placeholder="Product Name" value="{{$product->product_name}}" id="productname" name="productname"></br>
+                    <input type="text" class="form-control" placeholder="Product Name" value="{{$product->product_name}}" id="productname" name="productname" readonly></br>
                 </div>
 
                 <div class="form-group">
@@ -25,9 +25,24 @@
                     <input type="number" class="form-control" id="price" name="price" value="{{$product->product_price}}" min="1" max="99999"></br>
                 </div>
 
+                <label for="uname"><b>Status</b></label>
+                <div class="form-group form-check">
+                    <input class="form-check-input" value="true" type="radio" name="status" id="status1">
+                    <label class="form-check-label" for="flexRadioDefault1">
+                        Activate
+                    </label>
+                </div>
+
+                <div class="form-group form-check">
+                    <input class="form-check-input" value="false" type="radio" name="status" id="status2">
+                    <label class="form-check-label" for="flexRadioDefault2">
+                        Deactivate
+                    </label>
+                </div>
+
                 <div class="form-group">
                     <label for="cars"><b>Billing period:</b></label>
-                    <select name="billingperiod" class="form-control" id="billingperiod">
+                    <select name="billingperiod" class="form-control" id="billingperiod" disabled>
                         <option value="">Select</option>
                         <option value="day" @if ($product->billing_period == 'day') selected @endif>Daily</option>
                         <option value="week" @if ($product->billing_period == 'week') selected @endif>Wekkly</option>
@@ -49,46 +64,15 @@
     $(document).ready(function() {
         $("#product-form").validate({
             rules: {
-                productname: {
-                    required: true,
-                    not_empty: true,
-                },
                 description: {
-                    required: true,
-                    not_empty: true,
-                },
-                price: {
-                    required: true,
-                    not_empty: true,
-                },
-                productimage: {
-                    extension: "jpg,jpeg,png",
-                },
-                billingperiod: {
                     required: true,
                     not_empty: true,
                 },
             },
             messages: {
-                productname: {
-                    required: "@lang('validation.required', ['attribute' => 'productname'])",
-                    not_empty: "@lang('validation.not_empty', ['attribute' => 'productname'])",
-                },
                 description: {
                     required: "@lang('validation.required', ['attribute' => 'description'])",
                     not_empty: "@lang('validation.not_empty', ['attribute' => 'description'])",
-                },
-                price: {
-                    required: "@lang('validation.required', ['attribute' => 'price'])",
-                    not_empty: "@lang('validation.not_empty', ['attribute' => 'price'])",
-                    digits: "@lang('validation.digits', ['attribute' => 'price'])"
-                },
-                productimage: {
-                    extension: "@lang('validation.extension', ['attribute' => 'productimage'])",
-                },
-                billingperiod: {
-                    required: "@lang('validation.required', ['attribute' => 'billingperiod'])",
-                    not_empty: "@lang('validation.not_empty', ['attribute' => 'billingperiod'])",
                 },
             },
             errorClass: 'invalid-feedback',

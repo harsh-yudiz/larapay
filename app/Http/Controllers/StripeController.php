@@ -28,7 +28,7 @@ class StripeController extends Controller
 
     public function card()
     {
-        $user = User::with('paymentIntents')->first();
+        $user = User::with('paymentIntents')->where('id', auth()->id())->first();
         $data = [
             'name' => $user->name,
             'email' => $user->email,
@@ -69,7 +69,8 @@ class StripeController extends Controller
 
     public function createProduct()
     {
-        return view('stripe.product.createProduct');
+        $currencys = DB::table('currencys')->get();
+        return view('stripe.product.createProduct', compact('currencys'));
     }
 
     public function storeProduct(ProductCreast $request)
@@ -80,20 +81,24 @@ class StripeController extends Controller
                 'name'      => $request->productname,
                 'default_price_data' => [
                     'unit_amount' => $request->price * 100,
-                    'currency' => 'USD',
+                    'currency' => $request->currency,
                     'recurring' => [
                         'interval' => $request->billingperiod,
                         'interval_count' => 1,
                     ]
                 ]
             ]);
-
             if ($sripeProduct) {
                 $price =  $this->stripe->prices->retrieve(
                     $sripeProduct->default_price,
                     []
                 );
                 if ($price) {
+                    if ($sripeProduct->active == false) {
+                        $status = 'deactivate';
+                    } else {
+                        $status = 'activate';
+                    }
                     $product = Product::create([
                         'product_id' => $sripeProduct->id,
                         'price_id' => $sripeProduct->default_price,
@@ -101,29 +106,35 @@ class StripeController extends Controller
                         'description' => $request->description,
                         'billing_period' => $request->billingperiod,
                         'product_price' =>   $price->unit_amount_decimal / 100,
-                        'is_product' => 'stripe'
+                        'is_product' => 'stripe',
+                        'status' => $status
                     ]);
 
                     DB::commit();
                     if ($product) {
-                        return redirect()->route('stripe-product-list')->with('message', 'product sucessfully created.');
+                        flash('Your product is created sucessfully.')->success();
+                        return redirect()->route('stripe-product-list');
                     }
                 }
             }
         } catch (\Stripe\Exception\ApiConnectionException $e) {
             DB::rollback();
             Log::info("Api Connetion Exception occure" . $e->getMessage());
+            flash('Something went to wrong, please try again.')->error();
             return redirect()->back();
         } catch (\Stripe\Exception\ApiErrorException $e) {
             DB::rollback();
+            flash('Something went to wrong, please try again.')->error();
             Log::info("Api Error Exception occure " . $e->getMessage());
             return redirect()->back();
         } catch (ModelNotFoundException $e) {
             DB::rollback();
+            flash('Something went to wrong, please try again.')->error();
             Log::info("Model not found exception occure" . $e->getMessage());
             return redirect()->back();
         } catch (Exception $e) {
             DB::rollback();
+            flash('Something went to wrong, please try again.')->error();
             Log::info("General exception occure" . $e->getMessage());
             return redirect()->back();
         }
@@ -137,24 +148,27 @@ class StripeController extends Controller
 
     public function updateProduct(Request $request, $productId)
     {
-        $prodcut = Product::select(['product_id', 'price_id'])->findOrFail($productId);
-        // $this->stripe->products->update(
-        //     $prodcut->stripe_product_id,
-        //     [
-        //         'description' => $request->description,
-        //         'name' => $request->productname
-        //     ]
-        // );
-
-        $price = $this->stripe->prices->update(
-            $prodcut->price_id,
-            [
-                'metadata' => ['order_id' => '6735'],
-                ['unit_amount' => $request->unit_amount],
-            ]
-        );
-
-        dd($price);
+        $product = Product::findOrFail($productId);
+        if ($product) {
+            $updateProduct = $this->stripe->products->update(
+                $product->product_id,
+                [
+                    'description' => $request->description,
+                    'active' => $request->status,
+                ]
+            );
+            if ($updateProduct) {
+                if ($updateProduct->active == false) {
+                    $product->status = 'deactivate';
+                } else {
+                    $product->status = 'activate';
+                }
+                $product->description = $updateProduct->description;
+                $product->save();
+                flash('your Product updated sucessfully.')->success();
+                return redirect()->route('stripe-product-list');
+            }
+        }
     }
 
     public function productList()
@@ -172,9 +186,9 @@ class StripeController extends Controller
     {
         try {
             $date = null;
-            $product = Product::select('stripe_price_id')->findOrFail($request->prodId);
+            $product = Product::select('price_id', 'id')->findOrFail($request->prodId);
             $user = auth()->user();
-            $subscription = Subscription::where('user_id', $user->id)->first();
+            $subscription = Subscription::where('user_id', $user->id)->where('is_subscription', 'stripe')->first();
             if (!$user->stripe_customer_id) {
                 $stripeCustomer = $this->stripe->customers->create([
                     [
@@ -193,6 +207,7 @@ class StripeController extends Controller
                 $user->save();
             }
 
+
             if ($subscription != null && $subscription->subscription_id != null) {
                 $stripeRetriveSubscription = $this->stripe->subscriptions->retrieve(
                     $subscription->subscription_id
@@ -207,38 +222,48 @@ class StripeController extends Controller
                 ["source" => $request->stripe_token]
             );
 
-            $subscriptionScheduled = \Stripe\SubscriptionSchedule::create([
-                "customer" => $user->stripe_customer_id,
-                "start_date" => $date,
-                "end_behavior" => "release",
-                "phases" => [
-                    [
-                        "items" => [
-                            [
-                                "price" => $product->stripe_price_id,
-                                "quantity" => 1,
-                            ],
-                        ],
-                        "iterations" => 12
-                    ],
+            $subscriptionScheduled = $this->stripe->subscriptions->create([
+                'customer' => $user->stripe_customer_id,
+                'items' => [
+                    ['price' => $product->price_id],
                 ],
             ]);
+
+
+            // $subscriptionScheduled = \Stripe\SubscriptionSchedule::create([
+            //     "customer" => $user->stripe_customer_id,
+            //     "start_date" => $date,
+            //     "end_behavior" => "release",
+            //     "phases" => [
+            //         [
+            //             "items" => [
+            //                 [
+            //                     "price" => $product->price_id,
+            //                     "quantity" => 1,
+            //                 ],
+            //             ],
+            //             "iterations" => 12
+            //         ],
+            //     ],
+            // ]);
 
             $subscription = Subscription::updateOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'subscription_id' => $subscriptionScheduled->status == 'active' ? $subscriptionScheduled->subscription : null,
+                    'subscription_id' => $subscriptionScheduled->status == 'active' ? $subscriptionScheduled->id : $subscription->subscription_id,
                     'schedule_subscription_id' => $subscriptionScheduled->status == 'not_started' ? $subscriptionScheduled->id : null,
                     'scheduled_period_start' => $subscriptionScheduled->status == 'not_started' ? Carbon::createFromTimestamp($subscriptionScheduled['phases'][0]['start_date'])->format('Y-m-d') : null,
                     'stripe_customer_id' => $user->stripe_customer_id,
                     'plan_id' => $product->id,
                     'status' => 'deactivate',
+                    'is_subscription' => 'stripe'
                 ]
             );
             DB::commit();
 
             if ($subscription) {
-                return redirect()->route('sucess-message');
+                flash('Your subscription created sucessfully.')->success();
+                return redirect()->route('user-listing');
             }
         } catch (\Stripe\Exception\CardException $e) {
             DB::rollback();
@@ -262,6 +287,7 @@ class StripeController extends Controller
             DB::rollback();
             Log::info("General exception occure" . $e->getMessage());
         }
+        flash('Something went to wrong, please try again.')->error();
         return redirect()->back();
     }
 
@@ -281,6 +307,7 @@ class StripeController extends Controller
                     $subscription->status = $subscriptionCancelResponse->status;
                     $subscription->save();
                     DB::commit();
+                    flash('Your subscription is canceled sucessfully.')->success();
                     return redirect()->back();
                 }
             }
@@ -306,9 +333,11 @@ class StripeController extends Controller
             DB::rollback();
             Log::info("General exception occure" . $e->getMessage());
         }
+        flash('Something went to wrong, please try again.')->error();
         return redirect()->back();
     }
 
+    //Dont use
     public function createPrice()
     {
         $stripeProduct = $this->stripe->prices->create([
@@ -330,7 +359,44 @@ class StripeController extends Controller
             );
             if ($stripeProduct) {
                 $product->delete();
+                flash('Your product is deleted is sucessfully.')->success();
                 return redirect()->back();
+            }
+        }
+    }
+
+    public function SubscriptionActiveDeactive($subscriptionId)
+    {
+        $subscription = Subscription::findOrFail($subscriptionId);
+        $retriveSubscription = $this->stripe->subscriptions->retrieve(
+            $subscription->subscription_id,
+            []
+        );
+        if ($retriveSubscription->status == 'active') {
+            if ($retriveSubscription->pause_collection == null) {
+                $pauseCollection = $this->stripe->subscriptions->update(
+                    $retriveSubscription->id,
+                    ['pause_collection' => ['behavior' => 'void']]
+                );
+                if ($pauseCollection->pause_collection->behavior == 'void') {
+                    $subscription->status   = 'deactive';
+                    $subscription->save();
+                    flash('Your subscription collection is push sucessfully.')->success();
+                    return redirect()->back();
+                }
+            } else {
+                $pauseCollection =  $this->stripe->subscriptions->update(
+                    $subscription->subscription_id,
+                    [
+                        'pause_collection' => '',
+                    ]
+                );
+                if ($pauseCollection->pause_collection == null) {
+                    $subscription->status   = 'activated';
+                    $subscription->save();
+                    flash('Your subscription collection is resume sucessfully.')->success();
+                    return redirect()->back();
+                }
             }
         }
     }

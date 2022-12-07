@@ -1,6 +1,7 @@
 @extends('layout.app')
 @section('content')
 <section>
+<a href="{{route('paypal-create-prodcut')}}">Create Product</a></td>
   <table class="table">
     <thead>
       <tr>

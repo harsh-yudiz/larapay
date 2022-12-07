@@ -9,57 +9,52 @@ use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+  use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-        //Curl call for post request.
-        function fireCURL($url, $access_token = NULL, $data = NULL, $method = null)
-        {
-            // dump($url);
-            // dump($data);
-            // dd($method);
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => $url,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => $method,
-                CURLOPT_POSTFIELDS => $data,
-                CURLOPT_HTTPHEADER => array(
-                    'Authorization: Basic e3tjbGllbnRfaWR9fTp7e2NsaWVudF9zZWNyZXR9fQ==',
-                    "Content-Type:application/json"
-                ),
-            ));
-            $response = curl_exec($curl);
-            curl_close($curl);
-            return (object) json_decode($response, true);
-        }
-    
-        //Curl call for get request.
-        function fireCURLGET($url, $access_token = NULL, $data = NULL)
-        {
-            $curl = curl_init();
-    
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => $url,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_HTTPHEADER => array(
-                    'Authorization: Bearer ' . $access_token,
-                    "Content-Type:application/json"
-    
-                ),
-            ));
-            $response = curl_exec($curl);
-            curl_close($curl);
-            return json_decode($response, true);
-        }
+  //Curl call for post request.
+  function fireCURL($paypalCredentials, $postField, $header)
+  {
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => $paypalCredentials['url'],
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => '',
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => $paypalCredentials['method'],
+      CURLOPT_POSTFIELDS => $postField,
+      CURLOPT_HTTPHEADER => $header
+    ));
+    $response = curl_exec($curl);
+    curl_close($curl);
+    return (object) json_decode($response, true);
+  }
+  function fireCURLTwo($paypalCredentials)
+  {
+    // dd($paypalCredentials['PayPal-Request-Id']); 
+
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => 'https://api-m.sandbox.paypal.com/v1/catalogs/products',
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => '',
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => 'POST',
+      CURLOPT_POSTFIELDS => $paypalCredentials['postField'],
+      CURLOPT_HTTPHEADER => array(
+        'Content-Type: application/json',
+        'PayPal-Request-Id:' . $paypalCredentials['PayPal-Request-Id'],
+        'Authorization: Bearer ' . $paypalCredentials['Authentication']
+      ),
+    ));
+    $response = curl_exec($curl);
+    dd($response);
+    curl_close($curl);
+    return (object) json_decode($response, true);
+  }
 }

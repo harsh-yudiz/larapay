@@ -124,6 +124,7 @@
             } else {
                 //Stripe confirm payment method call 
                 stripe.createToken(card).then(function(result) {
+                    console.log(result);
                     if (result.token) {
                         $('#stripe_token').val(result.token.id);
                         $(".loader").hide();

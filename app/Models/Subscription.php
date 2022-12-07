@@ -18,7 +18,8 @@ class Subscription extends Model
         'current_period_start',
         'current_period_end',
         'stripe_customer_id',
-        'status'
+        'status',
+        'is_subscription'
     ];
 
     public function product()

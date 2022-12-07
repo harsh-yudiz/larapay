@@ -35,7 +35,16 @@
                         <option value="year">Yearly</option>
                     </select></br>
                 </div>
-                <h4>Create price</h4>
+                <div class="form-group">
+                    <label for="cars"><b>Currency:</b></label>
+                    <select name="currency" class="form-control" id="currency">
+                        <option value="">Select</option>
+                        @foreach ($currencys->pluck('currency') as $currency)
+                        <option value="{{$currency}}">{{$currency}}</option>
+                        @endforeach
+                    </select></br>
+                </div>
+                
 
 
                 <div class="form-group">

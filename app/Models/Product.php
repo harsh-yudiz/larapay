@@ -18,7 +18,8 @@ class Product extends Model
         'billing_period',
         'is_product',
         'is_plan',
-        'plan_id'
+        'plan_id',
+        'status'
     ];
 
     public function subscription()

@@ -59,7 +59,7 @@ class UserController extends Controller
 
     public function userList()
     {
-        $users = User::with('subscription.product')->get();
+        $users = User::with('subscription.product')->get(); 
         return view('user-list', compact('users'));
     }
 

@@ -57,11 +57,15 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('paypal/plan/list', [PayPalController::class, 'planList'])->name('paypal-plan-list');
     Route::get('paypal/subscription/create/{planId}', [PayPalController::class, 'createSubscription'])->name('paypal-subscription-create');
     Route::post('paypal/subscription/store', [PayPalController::class, 'storeSubscription'])->name('paypal-subscription-store');
-    Route::get('paypal/edit/plan',[PayPalController::class, 'editPlan'])->name('paypal-plan-edit');
+    Route::get('paypal/edit/plan', [PayPalController::class, 'editPlan'])->name('paypal-plan-edit');
     Route::get('stripe/create/price', [StripeController::class, 'createPrice'])->name('stripe-create-price');
     Route::get('stripe/delete/product/{productId}', [StripeController::class, 'deleteProduct'])->name('stripe-delete-prodcut');
+    Route::get('stripe/subscription/active-deactive/{subscriptionId}', [StripeController::class, 'SubscriptionActiveDeactive'])->name('stripe-subscription-active-deactive');
+    Route::get('paypal/subscription/active-deactive/{subscriptionId}', [PayPalController::class, 'subscritpionActivatDeactivate'])->name('paypal-subscription-activate-deactivate');
+
+    Route::get('paypalAuthentication', [PayPalController::class, 'authToken'])->name('paypal-authentication');
 });
 
-Route::post('stripe/checkout/webhook', [WebHookController::class, 'StripeCheckoutPaymentIntentAction']);
+Route::post('stripe/webhook', [WebHookController::class, 'StripeAction']);
 Route::post('stripe/subscription/webhook', [WebHookController::class, 'StripeSubscriptionIntentAction']);
 Route::post('paypal-webhook', [WebHookController::class, 'PaypalPaymentIntentAction']);

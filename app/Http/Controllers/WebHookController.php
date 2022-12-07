@@ -21,13 +21,20 @@ class WebHookController extends Controller
         Stripe::setApiKey(config('services.stripe.secret'));
     }
 
-    public function StripeCheckoutPaymentIntentAction(Request $request)
+    public function StripeAction(Request $request)
     {
         $event = Event::retrieve($request->id);
         $userPaymentIntent = UserPaymentIntent::with('user')->where('payment_intent_id', $event->data->object->payment_intent)->first();
+        $userSubscription = Subscription::with('user')->where('stripe_customer_id', $event->data->object->customer)->first();
+        if ($userPaymentIntent !=null && $userPaymentIntent->user != null) {
+            $user_id = $userPaymentIntent->user['id'];
+        } else {
+            $user_id = $userSubscription->user['id'];
+        }
+
         if ($event->type == 'charge.succeeded') {
             $payment = Payment::create([
-                'user_id' => $userPaymentIntent->user ? $userPaymentIntent->user['id'] : null,
+                'user_id' => $user_id,
                 'charge_event_id' => $event->data->object->id,
                 'payment_type' => $event->data->object->payment_method_details->type,
                 'payment_intent_id' => $event->data->object->payment_intent,
@@ -36,6 +43,17 @@ class WebHookController extends Controller
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now(),
             ]);
+            if ($payment && $event['data']['object']['invoice'] != null && $userSubscription) {
+                if ($payment) {
+                    $SubscriptionCreatedDate = date('Y-m-d');
+                    $SubscriptionEndDate = date('Y-m-d', strtotime($SubscriptionCreatedDate . ' + 30 days'));
+                    $userSubscription->current_period_end = $SubscriptionEndDate;
+                    $userSubscription->current_period_start = $SubscriptionCreatedDate;
+                    $userSubscription->status = 'activated';
+                    $userSubscription->save();
+                    Log::info('---------- Subscritpion Payment Create ----------');
+                }
+            }
 
             Log::info('---------- Stripe Payment Create ----------');
             Log::info(json_encode($event));
@@ -54,49 +72,54 @@ class WebHookController extends Controller
         }
     }
 
-    public function StripeSubscriptionIntentAction(Request $request)
-    {
-        $event = Event::retrieve($request->id);
-        $userSubscription = Subscription::with('user')->where('stripe_customer_id', $event->data->object->customer)->first();
+    // public function StripeSubscriptionIntentAction(Request $request)
+    // {
+    //     $event = Event::retrieve($request->id);
+    //     $userSubscription = Subscription::with('user')->where('stripe_customer_id', $event->data->object->customer)->first();
 
-        if ($event->type == 'charge.succeeded') {
-            $payment = Payment::create([
-                'user_id' => $userSubscription->user ? $userSubscription->user['id'] : null,
-                'charge_event_id' => $event->data->object->id,
-                'payment_type' => $event->data->object->payment_method_details->type,
-                'payment_intent_id' => $event->data->object->payment_intent,
-                'amount' => $event->data->object->amount / 100,
-                'status' => $event->data->object->status,
-                'created_at' => \Carbon\Carbon::now(),
-                'updated_at' => \Carbon\Carbon::now(),
-            ]);
+    //     if ($event->type == 'charge.succeeded') {
+    //         $payment = Payment::create([
+    //             'user_id' => $userSubscription->user ? $userSubscription->user['id'] : null,
+    //             'charge_event_id' => $event->data->object->id,
+    //             'payment_type' => $event->data->object->payment_method_details->type,
+    //             'payment_intent_id' => $event->data->object->payment_intent,
+    //             'amount' => $event->data->object->amount / 100,
+    //             'status' => $event->data->object->status,
+    //             'created_at' => \Carbon\Carbon::now(),
+    //             'updated_at' => \Carbon\Carbon::now(),
+    //         ]);
 
-            if ($payment) {
-                $SubscriptionCreatedDate = date('Y-m-d');
-                $SubscriptionEndDate = date('Y-m-d', strtotime($SubscriptionCreatedDate . ' + 30 days'));
-                $userSubscription->current_period_end = $SubscriptionEndDate;
-                $userSubscription->current_period_start = $SubscriptionCreatedDate;
-                $userSubscription->status = 'activated';
-                $userSubscription->save();
-                Log::info('---------- Subscritpion Payment Create ----------');
-            }
+    //         if($event)
+    //         {
+    //             dd(12);
+    //         }
 
-            Log::info('---------- Stripe Payment Create ----------');
-            Log::info(json_encode($event));
-        }
+    //         if ($payment) {
+    //             $SubscriptionCreatedDate = date('Y-m-d');
+    //             $SubscriptionEndDate = date('Y-m-d', strtotime($SubscriptionCreatedDate . ' + 30 days'));
+    //             $userSubscription->current_period_end = $SubscriptionEndDate;
+    //             $userSubscription->current_period_start = $SubscriptionCreatedDate;
+    //             $userSubscription->status = 'activated';
+    //             $userSubscription->save();
+    //             Log::info('---------- Subscritpion Payment Create ----------');
+    //         }
 
-        if ($event->type == 'charge.failed') {
-            $paymentFaild = new Payment();
-            $paymentFaild->status = 'cancel';
-            $paymentFaild->user_id = $userSubscription->user->id;
-            $paymentFaild->amount = 0.00;
-            $paymentFaild->created_at = \Carbon\Carbon::now();
-            $paymentFaild->updated_at = \Carbon\Carbon::now();
-            $paymentFaild->save();
-            Log::info('---------- Stripe Payment Faild ----------');
-            Log::info(json_encode($event));
-        }
-    }
+    //         Log::info('---------- Stripe Payment Create ----------');
+    //         Log::info(json_encode($event));
+    //     }
+
+    //     if ($event->type == 'charge.failed') {
+    //         $paymentFaild = new Payment();
+    //         $paymentFaild->status = 'cancel';
+    //         $paymentFaild->user_id = $userSubscription->user->id;
+    //         $paymentFaild->amount = 0.00;
+    //         $paymentFaild->created_at = \Carbon\Carbon::now();
+    //         $paymentFaild->updated_at = \Carbon\Carbon::now();
+    //         $paymentFaild->save();
+    //         Log::info('---------- Stripe Payment Faild ----------');
+    //         Log::info(json_encode($event));
+    //     }
+    // }
 
     public function PaypalPaymentIntentAction(Request $request)
     {

@@ -9,6 +9,8 @@
 </section>
 @endsection
 @push('extra-javascript')
+<script src="https://www.paypal.com/sdk/js?client-id=AfDO_OUsGVSGHL1BvYd0Q11DZKl_XYhbz0CbGyazqChwCPNsSXdavxxyyYCl1jaXvfBtnkezGN95ojOy&vault=true&intent=subscription">
+</script>
 <script>
     paypal.Buttons({
         createSubscription: function(data, actions) {
