@@ -222,30 +222,30 @@ class StripeController extends Controller
                 ["source" => $request->stripe_token]
             );
 
-            $subscriptionScheduled = $this->stripe->subscriptions->create([
-                'customer' => $user->stripe_customer_id,
-                'items' => [
-                    ['price' => $product->price_id],
-                ],
-            ]);
-
-
-            // $subscriptionScheduled = \Stripe\SubscriptionSchedule::create([
-            //     "customer" => $user->stripe_customer_id,
-            //     "start_date" => $date,
-            //     "end_behavior" => "release",
-            //     "phases" => [
-            //         [
-            //             "items" => [
-            //                 [
-            //                     "price" => $product->price_id,
-            //                     "quantity" => 1,
-            //                 ],
-            //             ],
-            //             "iterations" => 12
-            //         ],
+            // $subscriptionScheduled = $this->stripe->subscriptions->create([
+            //     'customer' => $user->stripe_customer_id,
+            //     'items' => [
+            //         ['price' => $product->price_id],
             //     ],
             // ]);
+
+
+            $subscriptionScheduled = \Stripe\SubscriptionSchedule::create([
+                "customer" => $user->stripe_customer_id,
+                "start_date" => $date,
+                "end_behavior" => "release",
+                "phases" => [
+                    [
+                        "items" => [
+                            [
+                                "price" => $product->price_id,
+                                "quantity" => 1,
+                            ],
+                        ],
+                        "iterations" => 12
+                    ],
+                ],
+            ]);
 
             $subscription = Subscription::updateOrCreate(
                 ['user_id' => $user->id],

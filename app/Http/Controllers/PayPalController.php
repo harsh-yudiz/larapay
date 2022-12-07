@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\register;
 use App\Models\Product;
 use App\Models\Subscription;
 use App\Models\UserPaymentIntent;
@@ -11,10 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Srmklive\PayPal\Services\PayPal as PayPalClient;
-use Illuminate\Support\Str;
-use App\Http\Requests\Paypal\Plan\createPlan;
-use Carbon\Carbon;
 
 class PayPalController extends Controller
 {
