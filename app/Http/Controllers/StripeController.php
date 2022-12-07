@@ -34,12 +34,12 @@ class StripeController extends Controller
             'email' => $user->email,
             'payment_intent_secret' => $user->paymentIntents->payment_intent_secret,
         ];
-        return view('card', compact('data'));
+        return view('stripe.card', compact('data'));
     }
 
     public function CheckoutView()
     {
-        return view('checkout');
+        return view('stripe.checkout');
     }
 
     public function createPaymentIntent(Request $request)

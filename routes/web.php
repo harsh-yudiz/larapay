@@ -32,7 +32,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('card', [StripeController::class, 'card'])->name('card');
     Route::get('stripe/checkoutView', [StripeController::class, 'checkoutView'])->name('checkout-view');
     Route::post('createPaymentIntent', [StripeController::class, 'createPaymentIntent'])->name('create-payment-intent');
-    Route::post('checkout/payment', [StripeController::class, 'CheckoutPayment'])->name('checkout-payment');
+    // Route::post('checkout/payment', [StripeController::class, 'CheckoutPayment'])->name('checkout-payment');
     Route::get('stripe/subscription/{productId}', [StripeController::class, 'Subscription'])->name('subscription');
     Route::get('paypal/checkoutView', [PayPalController::class, 'checkoutView'])->name('paypal-checkout-view');
     Route::get('paypal/cardView', [PayPalController::class, 'cardView'])->name('paypal-card-view');
