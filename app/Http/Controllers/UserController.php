@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\register;
+use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
@@ -51,17 +52,21 @@ class UserController extends Controller
     public function userLogout()
     {
         Session::flush();
-
         Auth::logout();
-
         flash('Your are sucessfully logout.')->success();
         return redirect()->route('login');
     }
 
     public function userList()
     {
-        $users = User::with('subscription.product')->get();
+        $users = User::with('subscription.product')->orderBy('id', 'DESC')->paginate(10);
         return view('user-list', compact('users'));
+    }
+
+    public function userPaymentList()
+    {
+        $payments = Payment::with('user')->orderBy('id', 'DESC')->paginate(10);
+        return view('user-payment-list', compact('payments'));
     }
 
     public function Sucess()

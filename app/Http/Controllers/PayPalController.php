@@ -53,7 +53,7 @@ class PayPalController extends Controller
 
     public function PayPalProductList()
     {
-        $products = Product::where('is_product', 'paypal')->get();
+        $products = Product::where('is_product', 'paypal')->orderBy('id', 'DESC')->paginate(10);
         return view('paypal.product.listing', compact('products'));
     }
 
@@ -111,7 +111,6 @@ class PayPalController extends Controller
 
     public function createPlan($productId)
     {
-        // $products = Product::where('is_paypal_product','yes')->findOrFail($productId);   
         return view('paypal.plan.create', compact('productId'));
     }
 
@@ -204,7 +203,7 @@ class PayPalController extends Controller
 
     public function planList()
     {
-        $plans = Product::where('is_plan', 'paypal')->get();
+        $plans = Product::where('is_plan', 'paypal')->orderBy('id', 'DESC')->paginate(10);
         return view('paypal.plan.list', compact('plans'));
     }
 

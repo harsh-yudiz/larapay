@@ -136,7 +136,7 @@
                         if (result.paymentIntent.status === 'succeeded') {
                             $(".loader").hide();
                             localStorage.setItem("paymentSucessMessage", "Your payment intent has been successfully created.");
-                            var route = "{{ route('checkout-view') }}";
+                            var route = "{{ route('user-payment-list') }}";
                             window.location.replace(route);
                         }
                     }

@@ -11,17 +11,24 @@
       </tr>
     </thead>
     <tbody>
+      @if(!empty($products) && $products->count())
       @foreach ($products as $product)
       <tr>
         <th scope="row">{{$product->id}}</th>
         <td>{{$product->product_name}}</td>
         <td>{{$product->description}}</td>
         <td>
-          <!-- <a href="{{env('APP_URL')}}/paypal/edit/product/{{$product->id}}">Edit Product</a> -->
-        <a href="{{env('APP_URL')}}/paypal/create/plan/{{$product->id}}">Create Plan</a></td>
+          <a href="{{env('APP_URL')}}/paypal/create/plan/{{$product->id}}">Create Plan</a>
+        </td>
       </tr>
       @endforeach
+      @else
+      <tr>
+        <td colspan="10">There are no data.</td>
+      </tr>
+      @endif
     </tbody>
   </table>
+  {!! $products->links() !!}
 </section>
 @endsection

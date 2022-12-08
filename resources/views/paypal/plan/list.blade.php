@@ -11,6 +11,7 @@
             </tr>
         </thead>
         <tbody>
+            @if(!empty($plans) && $plans->count())
             @foreach ($plans as $plans)
             <tr>
                 <th scope="row">{{$plans->id}}</th>
@@ -21,7 +22,13 @@
                 </td>
             </tr>
             @endforeach
+            @else
+            <tr>
+                <td colspan="10">There are no data.</td>
+            </tr>
+            @endif
         </tbody>
     </table>
+    {!! $plans->links() !!}
 </section>
 @endsection

@@ -12,6 +12,7 @@
       </tr>
     </thead>
     <tbody>
+      @if(!empty($products) && $products->count())
       @foreach ($products as $product)
       <tr>
         <th scope="row">{{$product->id}}</th>
@@ -28,7 +29,13 @@
         </td>
       </tr>
       @endforeach
+      @else
+      <tr>
+        <td colspan="10">There are no data.</td>
+      </tr>
+      @endif
     </tbody>
   </table>
+  {!! $products->links() !!}
 </section>
 @endsection

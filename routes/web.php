@@ -46,6 +46,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('stripe/cancel/subscription/{Subscriptionid}', [StripeController::class, 'cancelSubscription'])->name('stripe-cancel-subscription');
     Route::get('sucess', [UserController::class, 'Sucess'])->name('sucess-message');
     Route::get('user/listing', [UserController::class, 'userList'])->name('user-listing');
+    Route::get('user/payment/listing', [UserController::class, 'userPaymentList'])->name('user-payment-list');
     Route::get('logout', [UserController::class, 'userLogout'])->name('logout');
     Route::get('paypal/product/list', [PayPalController::class, 'PayPalProductList'])->name('paypal-product-list');
     Route::get('paypal/create/prodcut', [PayPalController::class, 'createProduct'])->name('paypal-create-prodcut');

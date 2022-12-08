@@ -19,7 +19,7 @@
   <div class="loading loader" style="display: none;">Loading&#8230;</div>
   <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">LaraPay</a>
+      <a class="navbar-brand">LaraPay</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -32,8 +32,8 @@
             <ul class="dropdown-menu">
               @if(Auth::check())
               <li><a class="nav-link active" aria-current="page" href="{{route('logout')}}">Logout</a></li>
+              <li><a class="nav-link active" aria-current="page" href="{{route('user-listing')}}">User Listing</a></li>
               @else
-
               @if (Route::currentRouteName() == 'login')
               <li><a class="dropdown-item" href="{{route('register')}}">Register</a></li>
               @else
@@ -67,9 +67,6 @@
               <li><a class="dropdown-item" href="{{ route('paypal-plan-list') }}">Subscription Plan List</a></li>
               @endif
               <li><a class="dropdown-item" href="{{ route('paypal-create-prodcut') }}">Create Product</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
             </ul>
           </li>
         </ul>

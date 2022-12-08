@@ -2,6 +2,8 @@
 @section('content')
 <section>
     <div class="container bg-white my-3">
+        <div class="alert alert-success alert-checkout" id="alert-div">
+        </div>
         <div class="card">
             <div id="paypal-button-container"></div>
         </div>
@@ -23,9 +25,11 @@
                     subscriptionId: data.subscriptionID,
                 })
                 .then((response) => {
-                    $('#alert-checkout-sucess').text("Your subscription is created sucessfully.").show();
+                    localStorage.setItem("paymentSucessMessage", "Your subscription is created sucessfully.");
+                    var route = "{{ route('user-listing') }}";
+                    window.location.replace(route);
                 }, (error) => {
-                    $('#alert-checkout-sucess').text("Something went to wrong, Please try again.").show();
+                    $('.alert-checkout').text("Something went to wrong, Please try again.").show();
                 });
         }
     }).render('#paypal-button-container'); // Renders the PayPal button

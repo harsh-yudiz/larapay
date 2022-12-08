@@ -173,7 +173,7 @@ class StripeController extends Controller
 
     public function productList()
     {
-        $products = Product::where('is_product', 'stripe')->get();
+        $products = Product::where('is_product', 'stripe')->orderBy('id', 'DESC')->paginate(10);
         return view('stripe.product.productList', compact('products'));
     }
 

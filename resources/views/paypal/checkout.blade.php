@@ -3,12 +3,9 @@
 <section>
   <div class="h-100">
     <div class="container mt-5">
-
-      <div class="alert alert-success alert-checkout" id="alert-div">
-        <span id="alert-checkout-sucess"></span>
-      </div>
-
       <div class="row bg-light py-4">
+        <div class="alert alert-success alert-checkout" id="alert-div">
+        </div>
         <div class="col-md-3"></div>
         <div class="form-group ">
           <input type="number" class="form-control" id="paypalamount" name="amount" min="1" max="99999">
@@ -54,9 +51,11 @@
               amount: orderData['purchase_units'][0]['amount']['value']
             })
             .then((response) => {
-              $('#alert-checkout-sucess').text("Your payment is created sucessfully.").show();
+              localStorage.setItem("paymentSucessMessage", "Your payment is created sucessfully.");
+              var route = "{{ route('user-payment-list') }}";
+              window.location.replace(route);
             }, (error) => {
-              $('#alert-checkout-sucess').text("Something went to wrong, Please try again.").show();
+              $('.alert-checkout').text("Something went to wrong, Please try again.").show();
             });
         });
       },

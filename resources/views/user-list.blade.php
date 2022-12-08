@@ -1,6 +1,9 @@
 @extends('layout.app')
 @section('content')
 <section>
+  <div class="alert alert-success alert-checkout" id="alert-div">
+    <span id="alert-checkout-sucess"></span>
+  </div>
   <table class="table">
     <thead>
       <tr>
@@ -9,11 +12,11 @@
         <th scope="col">Email</th>
         <th scope="col">Plan</th>
         <th scope="col">Action
-
         </th>
       </tr>
     </thead>
     <tbody>
+      @if(!empty($users) && $users->count())
       @foreach ($users as $user)
       <tr>
         <th scope="row">{{$user->id}}</th>
@@ -51,7 +54,20 @@
         @endif
       </tr>
       @endforeach
+      @else
+      <tr>
+        <td colspan="10">There are no data.</td>
+      </tr>
+      @endif
     </tbody>
   </table>
+  {!! $users->links() !!}
 </section>
 @endsection
+@push('extra-javascript')
+<script>
+  var message = localStorage.getItem("paymentSucessMessage");
+  $('#alert-checkout-sucess').text(message).show();
+  localStorage.clear();
+</script>
+@endpush
