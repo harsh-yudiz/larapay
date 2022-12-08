@@ -12,7 +12,6 @@
       </tr>
     </thead>
     <tbody>
-      <a href="{{route('stripe-create-product')}}">Create Product</a>
       @foreach ($products as $product)
       <tr>
         <th scope="row">{{$product->id}}</th>

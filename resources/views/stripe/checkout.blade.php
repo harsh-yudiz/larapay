@@ -18,7 +18,6 @@
                     </form>
                 </div>
                 <div class="col-md-3"></div>
-                <a href="{{ route('stripe-product-list') }}">Stripe Subscription product</a>
             </div>
         </div>
     </div>

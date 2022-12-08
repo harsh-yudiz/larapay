@@ -25,9 +25,6 @@
                     <button type="submit">Register</button>
                 </form>
             </div>
-            <h4 class="card-header bg-white">
-                <a href="{{ route('login') }}" class="card-link fs-6 text-uppercase">Login</a>
-            </h4>
         </div>
     </div>
 </section>

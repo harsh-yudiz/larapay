@@ -47,19 +47,20 @@ class UserController extends Controller
             return redirect()->back()->with('message', 'Someting went to wrong, Plesae try again.');
         }
     }
-    
+
     public function userLogout()
     {
         Session::flush();
 
         Auth::logout();
 
+        flash('Your are sucessfully logout.')->success();
         return redirect()->route('login');
     }
 
     public function userList()
     {
-        $users = User::with('subscription.product')->get(); 
+        $users = User::with('subscription.product')->get();
         return view('user-list', compact('users'));
     }
 

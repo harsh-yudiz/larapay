@@ -14,7 +14,6 @@
           </div>
         </div>
         <div class="col-md-6">
-          <a href="{{ route('paypal-plan-list') }}">PayPal Subscription product</a>
         </div>
       </div>
     </div>
