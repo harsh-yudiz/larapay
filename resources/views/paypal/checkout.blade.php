@@ -3,6 +3,11 @@
 <section>
   <div class="h-100">
     <div class="container mt-5">
+
+      <div class="alert alert-success alert-checkout" id="alert-div">
+        <span id="alert-checkout-sucess"></span>
+      </div>
+
       <div class="row bg-light py-4">
         <div class="col-md-3"></div>
         <div class="form-group ">
@@ -49,9 +54,9 @@
               amount: orderData['purchase_units'][0]['amount']['value']
             })
             .then((response) => {
-              alert("sucess");
+              $('#alert-checkout-sucess').text("Your payment is created sucessfully.").show();
             }, (error) => {
-              alert("error");
+              $('#alert-checkout-sucess').text("Something went to wrong, Please try again.").show();
             });
         });
       },

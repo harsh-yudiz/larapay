@@ -31,30 +31,4 @@ class Controller extends BaseController
     curl_close($curl);
     return (object) json_decode($response, true);
   }
-  function fireCURLTwo($paypalCredentials)
-  {
-    // dd($paypalCredentials['PayPal-Request-Id']); 
-
-    $curl = curl_init();
-    curl_setopt_array($curl, array(
-      CURLOPT_URL => 'https://api-m.sandbox.paypal.com/v1/catalogs/products',
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_ENCODING => '',
-      CURLOPT_MAXREDIRS => 10,
-      CURLOPT_TIMEOUT => 0,
-      CURLOPT_FOLLOWLOCATION => true,
-      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-      CURLOPT_CUSTOMREQUEST => 'POST',
-      CURLOPT_POSTFIELDS => $paypalCredentials['postField'],
-      CURLOPT_HTTPHEADER => array(
-        'Content-Type: application/json',
-        'PayPal-Request-Id:' . $paypalCredentials['PayPal-Request-Id'],
-        'Authorization: Bearer ' . $paypalCredentials['Authentication']
-      ),
-    ));
-    $response = curl_exec($curl);
-    dd($response);
-    curl_close($curl);
-    return (object) json_decode($response, true);
-  }
 }
