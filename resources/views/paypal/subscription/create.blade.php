@@ -23,11 +23,9 @@
                     subscriptionId: data.subscriptionID,
                 })
                 .then((response) => {
-                    alert("Your subscription is created sucessfully.");
-                    // toastr.success("Your subscription is created sucessfully.");
+                    toastr.success("Your subscription is created sucessfully.");
                 }, (error) => {
-                    alert("Something went wrong. Please try again.");
-                    // toastr.error("Something went wrong. Please try again.");
+                    toastr.error("Something went wrong. Please try again.");
                 });
         }
     }).render('#paypal-button-container'); // Renders the PayPal button

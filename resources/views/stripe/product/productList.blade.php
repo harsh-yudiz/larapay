@@ -25,8 +25,6 @@
         </td>
         @endif
         <td><a href="{{env('APP_URL')}}/stripe/edit/product/{{$product->id}}">Edit</a>
-          <a href="{{env('APP_URL')}}/stripe/delete/product/{{$product->id}}">Delete</a>
-          <a href="{{env('APP_URL')}}/stripe/edit/product/{{$product->id}}">Create New Produt Price</a>
         </td>
       </tr>
       @endforeach

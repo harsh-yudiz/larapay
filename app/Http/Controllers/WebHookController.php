@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\Subscription;
 use Stripe\Stripe;
 use App\Models\UserPaymentIntent;
+use Carbon\Carbon;
 use Stripe\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -26,7 +27,7 @@ class WebHookController extends Controller
         $event = Event::retrieve($request->id);
         $userPaymentIntent = UserPaymentIntent::with('user')->where('payment_intent_id', $event->data->object->payment_intent)->first();
         $userSubscription = Subscription::with('user')->where('stripe_customer_id', $event->data->object->customer)->first();
-        if ($userPaymentIntent !=null && $userPaymentIntent->user != null) {
+        if ($userPaymentIntent != null && $userPaymentIntent->user != null) {
             $user_id = $userPaymentIntent->user['id'];
         } else {
             $user_id = $userSubscription->user['id'];
@@ -50,6 +51,10 @@ class WebHookController extends Controller
                     $userSubscription->current_period_end = $SubscriptionEndDate;
                     $userSubscription->current_period_start = $SubscriptionCreatedDate;
                     $userSubscription->status = 'activated';
+                    if ($userSubscription->schedule_subscription_id != null && $userSubscription->current_period_end != null && $userSubscription->current_period_end == Carbon::now()->toDateString()) {
+                        $userSubscription->subscription_id = $userSubscription->schedule_subscription_id;
+                        $userSubscription->schedule_subscription_id = null;
+                    }
                     $userSubscription->save();
                     Log::info('---------- Subscritpion Payment Create ----------');
                 }
