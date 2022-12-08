@@ -24,7 +24,8 @@
         @else
         <td></td>
         @endif
-        @if($user->subscription && $user->subscription->subscription_id && $user->subscription->status == 'activated')
+        @if ($user->subscription && $user->subscription->subscription_id)
+        @if($user->subscription->status == 'activated')
         @if($user->subscription->is_subscription == 'stripe')
         <td><a href="{{env('APP_URL')}}/stripe/cancel/subscription/{{$user->subscription->id}}">Cancel Subscription</a>
           <a href="{{env('APP_URL')}}/stripe/subscription/avtive-deactive/{{$user->subscription->id}}">Deactivated subscription</a>
@@ -44,7 +45,9 @@
         @else
         <td></td>
         @endif
-
+        @endif
+        @else
+        <td></td>
         @endif
       </tr>
       @endforeach

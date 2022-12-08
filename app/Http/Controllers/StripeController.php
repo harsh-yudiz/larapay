@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Stripe\Issuing\Card;
 use Stripe\Stripe;
 
 class StripeController extends Controller
@@ -251,7 +250,7 @@ class StripeController extends Controller
             $subscription = Subscription::updateOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'subscription_id' => $subscriptionScheduled->status == 'active' ? $subscriptionScheduled->id : $subscription->subscription_id,
+                    'subscription_id' => $subscriptionScheduled->status == 'active' ? $subscriptionScheduled->subscription : $subscription->subscription_id,
                     'schedule_subscription_id' => $subscriptionScheduled->status == 'not_started' ? $subscriptionScheduled->id : null,
                     'scheduled_period_start' => $subscriptionScheduled->status == 'not_started' ? Carbon::createFromTimestamp($subscriptionScheduled['phases'][0]['start_date'])->format('Y-m-d') : null,
                     'stripe_customer_id' => $user->stripe_customer_id,

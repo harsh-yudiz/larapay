@@ -31,7 +31,7 @@
             </a>
             <ul class="dropdown-menu">
               @if(Auth::check())
-              <a class="nav-link active" aria-current="page" href="{{route('logout')}}">Logout</a>
+              <li><a class="nav-link active" aria-current="page" href="{{route('logout')}}">Logout</a></li>
               @else
 
               @if (Route::currentRouteName() == 'login')
