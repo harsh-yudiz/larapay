@@ -1,9 +1,9 @@
 @extends('layout.app')
 @section('content')
 <section>
-  <div class="alert alert-success alert-checkout" id="alert-div">
+  <!-- <div class="alert alert-success alert-checkout" id="alert-div">
     <span id="alert-checkout-sucess"></span>
-  </div>
+  </div> -->
   <table class="table">
     <thead>
       <tr>
@@ -66,8 +66,8 @@
 @endsection
 @push('extra-javascript')
 <script>
-  var message = localStorage.getItem("paymentSucessMessage");
-  $('#alert-checkout-sucess').text(message).show();
-  localStorage.clear();
+  // var message = localStorage.getItem("paymentSucessMessage");
+  // $('#alert-checkout-sucess').text(message).show();
+  // localStorage.clear();
 </script>
 @endpush

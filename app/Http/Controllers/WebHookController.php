@@ -7,6 +7,7 @@ use App\Models\Subscription;
 use Stripe\Stripe;
 use App\Models\UserPaymentIntent;
 use Carbon\Carbon;
+use Facade\Ignition\DumpRecorder\Dump;
 use Stripe\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -81,9 +82,10 @@ class WebHookController extends Controller
     {
         $event = $request->all();
         $userPaymentIntent = USerPaymentIntent::with('user')->where('payment_capture_id', $event['resource']['id'])->first();
-        if ($event['event_type'] == 'CHECKOUT.ORDER.APPROVED') {
-            Payment::create([
+        if ($event['event_type'] == 'PAYMENT.CAPTURE.COMPLETED') {
+          $payment =   Payment::create([
                 'user_id' => $userPaymentIntent->user->id,
+                'payment_intent_id' => $event['resource']['id'],
                 'charge_event_id' => $event['id'],
                 'amount' => $event['resource']['amount']['value'],
                 'status' => $event['resource']['status'],
